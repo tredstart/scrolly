@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -23,16 +22,55 @@ func (s *Server) RegisterRoutes() http.Handler {
 	e.GET("/", IndexPage)
 	e.GET("/text/:id", GetText)
 	e.PUT("/text/:id", PutText)
+	e.GET("/new", NewText)
 
 	e.GET("/text/update/:id", UpdateArea)
 
 	return e
 }
 
+func NewText(c echo.Context) error {
+	id := uuid.NewString()
+	text := models.Text{Id: id, Text: "No content for now. Click on me to add."}
+	sesh, err := session.Get("session", c)
+	if err != nil {
+		return err
+	}
+
+	if id := sesh.Values["id"]; id == nil {
+
+		sesh.Options = &sessions.Options{
+			Path:     "/",
+			MaxAge:   86400 * 7,
+			HttpOnly: true,
+		}
+
+		text.Session = uuid.NewString()
+		err = models.CreateSession(text.Session)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, err.Error())
+		}
+		sesh.Values["id"] = text.Session
+		if err = sesh.Save(c.Request(), c.Response()); err != nil {
+			return err
+		}
+	} else {
+		text.Session = id.(string)
+	}
+	if err := models.CreateText(text); err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	texts, err := models.FetchTexts(text.Session)
+	if err != nil {
+		return err
+	}
+	return views.IndexPage(texts, text).Render(c.Request().Context(), c.Response())
+
+}
+
 func PutText(c echo.Context) error {
 	id := c.Param("id")
 	text := c.Request().FormValue("text")
-    log.Println(text)
 	err := models.UpdateText(id, text)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
@@ -83,7 +121,7 @@ func IndexPage(c echo.Context) error {
 		sesh.Values["id"] = session_id
 
 		id := uuid.NewString()
-		text := models.Text{Id: id, Session: session_id}
+		text := models.Text{Id: id, Session: session_id, Text: "No content for now. Click on me to add."}
 		if err := models.CreateText(text); err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
 		}

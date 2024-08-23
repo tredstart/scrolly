@@ -28,7 +28,7 @@ func Textarea(text models.Text) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-put=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"w-[70%] h-[500px]\"><form hx-put=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -36,7 +36,7 @@ func Textarea(text models.Text) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML\"><textarea name=\"text\" class=\"resize-y w-full border-2 border-solid border-black\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML\"><textarea name=\"text\" class=\"p-3 resize-none overflow-y w-full max-h-[70vh] border-2 border-solid border-black\" _=\"on input \n                set me.style.height to &#39;auto&#39;\n                set me.style.height to me.scrollHeight + &#39;px&#39;\n               on load\n                set me.style.height to &#39;auto&#39;\n                set me.style.height to me.scrollHeight + &#39;px&#39;\n                \">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -45,7 +45,7 @@ func Textarea(text models.Text) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</textarea> <input type=\"submit\" value=\"Save\"></form>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</textarea> <input type=\"submit\" value=\"Save\" class=\"hover:cursor-pointer hover:text-white hover:bg-black p-5\"></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -81,18 +81,10 @@ func Text(text models.Text) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if text.Text != "" {
-			var templ_7745c5c3_Var4 string = text.Text
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Var5 := `No content for now. Click on me to add.`
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
+		var templ_7745c5c3_Var4 string = text.Text
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</pre></div>")
 		if templ_7745c5c3_Err != nil {
@@ -113,9 +105,9 @@ func IndexPage(texts []models.Text, text models.Text) templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html>")
@@ -126,16 +118,25 @@ func IndexPage(texts []models.Text, text models.Text) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body hx-boost=\"true\"><div class=\"flex flex-row container\"><div class=\"flex w-40 text-center  border-r-black border-r border-solid items-center flex-col font-mono p-2 h-[100vh]\"><h2 class=\"text-xl\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body hx-boost=\"true\" _=\"\n            on load set $pause to true set $mod to 1 send modChanged\n                      repeat forever\n                          if window.scrollY &gt;= document.body.scrollHeight or $pause \n                            wait 50ms\n                          else \n                            set :scroll to window.scrollY\n                            increment :scroll\n                            call window.scrollTo(0, :scroll)\n                            wait (50 / $mod)ms\n                          end\n                      end\n                      \"><div class=\"flex flex-row container\"><div class=\"fixed top-0 left-0 flex w-40 text-center border-r-black border-r border-solid items-center flex-col gap-3 font-mono p-2 h-[100vh]\"><div class=\"inline-flex flex-row gap-3\"><h2 class=\"text-xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var7 := `History`
+		templ_7745c5c3_Var6 := `History`
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2><button type=\"button\" hx-get=\"/new\" hx-target=\"body\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var7 := `+`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -148,7 +149,7 @@ func IndexPage(texts []models.Text, text models.Text) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"w-[80%]\"><p class=\"text-clip\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"w-[80%] border border-solid border-black line-clamp-1 text-xs hover:cursor-pointer\" hx-target=\"#text\" hx-swap=\"outerHTML\"><p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -179,16 +180,16 @@ func IndexPage(texts []models.Text, text models.Text) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div class=\"fixed w-full bg-white bottom-0 right-0 border-solid border-black border-2 items-center justify-center h-20 p-10 box-border flex-row flex\"><button type=\"button\" _=\"\n                    on load\n                    set :space to 0\n                    on click \n                    log :space\n                      repeat while :space &lt; document.body.scrollHeight\n                      call window.scrollTo(0, :space)\n                      increment :space log :space wait 50ms \n                      end\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div class=\"fixed w-full bg-white bottom-0 right-0 border-solid border-black border-2 items-center justify-center h-20 p-10 box-border flex-row flex\"><button type=\"button\" _=\"\n                    on click \n                      set $pause to not $pause\n                      if $pause put &#39;▷&#39; into me\n                      else put &#39;||&#39; into me \n                      end\" class=\"rounded-full button border border-solid border-black w-8 h-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var10 := `|>`
+		templ_7745c5c3_Var10 := `&#9655;`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button> <button type=\"button\" class=\"rounded-full border border-solid border-black w-8 h-8\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button> <button type=\"button\" class=\"rounded-full button border border-solid border-black w-8 h-8\" _=\"on click set $mod to 1 send modChanged\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -197,7 +198,7 @@ func IndexPage(texts []models.Text, text models.Text) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button> <button type=\"button\" class=\"rounded-full border border-solid border-black w-8 h-8\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button> <button type=\"button\" class=\"rounded-full button border border-solid border-black w-8 h-8\" _=\"on click set $mod to 2 send modChanged\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -206,7 +207,7 @@ func IndexPage(texts []models.Text, text models.Text) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></div></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button> <input type=\"number\" _=\"on click from .button put $mod into me.value\n                    on input set $mod to me.value\n                    \" min=\"1\" name=\"num\" class=\"w-8\"></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

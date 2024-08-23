@@ -6,13 +6,27 @@ import (
 )
 
 templ Textarea(text models.Text) {
-	<form
-		hx-put={ fmt.Sprintf("/text/%s", text.Id) }
-		hx-swap="outerHTML"
+	<div
+		class="w-[70%] h-[500px]"
 	>
-		<textarea name="text" class="resize-y w-full border-2 border-solid border-black">{ text.Text }</textarea>
-		<input type="submit" value="Save"/>
-	</form>
+		<form
+			hx-put={ fmt.Sprintf("/text/%s", text.Id) }
+			hx-swap="outerHTML"
+		>
+			<textarea
+				name="text"
+				class="p-3 resize-none overflow-y w-full max-h-[70vh] border-2 border-solid border-black"
+				_="on input 
+                set me.style.height to 'auto'
+                set me.style.height to me.scrollHeight + 'px'
+               on load
+                set me.style.height to 'auto'
+                set me.style.height to me.scrollHeight + 'px'
+                "
+			>{ text.Text }</textarea>
+			<input type="submit" value="Save" class="hover:cursor-pointer hover:text-white hover:bg-black p-5"/>
+		</form>
+	</div>
 }
 
 templ Text(text models.Text) {
@@ -22,11 +36,7 @@ templ Text(text models.Text) {
 			hx-swap="outerHTML"
 			hx-target="#text"
 		>
-			if text.Text != "" {
-				{ text.Text }
-			} else {
-				No content for now. Click on me to add.
-			}
+			{ text.Text }
 		</pre>
 	</div>
 }
@@ -35,18 +45,38 @@ templ IndexPage(texts []models.Text, text models.Text) {
 	<!DOCTYPE html>
 	<html>
 		@head("Scrolly")
-		<body hx-boost="true">
+		<body
+			hx-boost="true"
+			_="
+            on load set $pause to true set $mod to 1 send modChanged
+                      repeat forever
+                          if window.scrollY >= document.body.scrollHeight or $pause 
+                            wait 50ms
+                          else 
+                            set :scroll to window.scrollY
+                            increment :scroll
+                            call window.scrollTo(0, :scroll)
+                            wait (50 / $mod)ms
+                          end
+                      end
+                      "
+		>
 			<div class="flex flex-row container">
 				<div
-					class="flex w-40 text-center  border-r-black border-r border-solid items-center flex-col font-mono p-2 h-[100vh]"
+					class="fixed top-0 left-0 flex w-40 text-center border-r-black border-r border-solid items-center flex-col gap-3 font-mono p-2 h-[100vh]"
 				>
-					<h2 class="text-xl">History</h2>
+					<div class="inline-flex flex-row gap-3">
+						<h2 class="text-xl">History</h2>
+						<button type="button" hx-get="/new" hx-target="body">+</button>
+					</div>
 					for _, t := range texts {
 						<div
 							hx-get={ fmt.Sprintf("/text/%s", t.Id) }
-							class="w-[80%]"
+							class="w-[80%] border border-solid border-black line-clamp-1 text-xs hover:cursor-pointer"
+							hx-target="#text"
+							hx-swap="outerHTML"
 						>
-							<p class="text-clip">
+							<p>
 								{ t.Text }
 							</p>
 						</div>
@@ -61,19 +91,34 @@ templ IndexPage(texts []models.Text, text models.Text) {
 				<button
 					type="button"
 					_="
-                    on load
-                    set :space to 0
                     on click 
-                    log :space
-                      repeat while :space < document.body.scrollHeight
-                      call window.scrollTo(0, :space)
-                      increment :space log :space wait 50ms 
+                      set $pause to not $pause
+                      if $pause put '▷' into me
+                      else put '||' into me 
                       end"
+					class="rounded-full button border border-solid border-black w-8 h-8"
 				>
-					|>
+					&#9655;
 				</button>
-				<button type="button" class="rounded-full border border-solid border-black w-8 h-8">></button>
-				<button type="button" class="rounded-full border border-solid border-black w-8 h-8">>></button>
+				<button
+					type="button"
+					class="rounded-full button border border-solid border-black w-8 h-8"
+					_="on click set $mod to 1 send modChanged"
+				>></button>
+				<button
+					type="button"
+					class="rounded-full button border border-solid border-black w-8 h-8"
+					_="on click set $mod to 2 send modChanged"
+				>>></button>
+				<input
+					type="number"
+					_="on click from .button put $mod into me.value
+                    on input set $mod to me.value
+                    "
+					min="1"
+					name="num"
+					class="w-8"
+				/>
 			</div>
 		</body>
 	</html>
