@@ -1,0 +1,9 @@
+main
+tmp/
+node_modules/
+testing.db
+package.json
+package-lock.json
+static/styles/main.css
+tailwind.config.js
+

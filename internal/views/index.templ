@@ -1,0 +1,80 @@
+package views
+
+import (
+	"fmt"
+	"github.com/tredstart/scrolly/internal/models"
+)
+
+templ Textarea(text models.Text) {
+	<form
+		hx-put={ fmt.Sprintf("/text/%s", text.Id) }
+		hx-swap="outerHTML"
+	>
+		<textarea name="text" class="resize-y w-full border-2 border-solid border-black">{ text.Text }</textarea>
+		<input type="submit" value="Save"/>
+	</form>
+}
+
+templ Text(text models.Text) {
+	<div id="text" class="w-[30%]">
+		<pre
+			hx-get={ fmt.Sprintf("/text/update/%s", text.Id) }
+			hx-swap="outerHTML"
+			hx-target="#text"
+		>
+			if text.Text != "" {
+				{ text.Text }
+			} else {
+				No content for now. Click on me to add.
+			}
+		</pre>
+	</div>
+}
+
+templ IndexPage(texts []models.Text, text models.Text) {
+	<!DOCTYPE html>
+	<html>
+		@head("Scrolly")
+		<body hx-boost="true">
+			<div class="flex flex-row container">
+				<div
+					class="flex w-40 text-center  border-r-black border-r border-solid items-center flex-col font-mono p-2 h-[100vh]"
+				>
+					<h2 class="text-xl">History</h2>
+					for _, t := range texts {
+						<div
+							hx-get={ fmt.Sprintf("/text/%s", t.Id) }
+							class="w-[80%]"
+						>
+							<p class="text-clip">
+								{ t.Text }
+							</p>
+						</div>
+					}
+				</div>
+				<div class="flex flex-col w-[90%] items-center p-4 gap-4">
+					<h2 class="text-2xl">Your prompt</h2>
+					@Text(text)
+				</div>
+			</div>
+			<div class="fixed w-full bg-white bottom-0 right-0 border-solid border-black border-2 items-center justify-center h-20 p-10 box-border flex-row flex">
+				<button
+					type="button"
+					_="
+                    on load
+                    set :space to 0
+                    on click 
+                    log :space
+                      repeat while :space < document.body.scrollHeight
+                      call window.scrollTo(0, :space)
+                      increment :space log :space wait 50ms 
+                      end"
+				>
+					|>
+				</button>
+				<button type="button" class="rounded-full border border-solid border-black w-8 h-8">></button>
+				<button type="button" class="rounded-full border border-solid border-black w-8 h-8">>></button>
+			</div>
+		</body>
+	</html>
+}
