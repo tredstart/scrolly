@@ -7,7 +7,7 @@ import (
 
 templ Textarea(text models.Text) {
 	<div
-		class="w-[70%] h-[500px]"
+		class="w-[40rem] h-[500px]"
 	>
 		<form
 			hx-put={ fmt.Sprintf("/text/%s", text.Id) }
