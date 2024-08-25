@@ -47,6 +47,7 @@ templ IndexPage(texts []models.Text, text models.Text) {
 	<html>
 		@head("Scrolly")
 		<body
+			class="font-mono"
 			hx-boost="true"
 			_="
             on load set $pause to true set $mod to 1 send modChanged
