@@ -655,8 +655,8 @@ video {
   width: 2rem;
 }
 
-.w-\[30\%\] {
-  width: 30%;
+.w-\[60\%\] {
+  width: 60%;
 }
 
 .w-\[70\%\] {
@@ -756,6 +756,10 @@ video {
 
 .p-5 {
   padding: 1.25rem;
+}
+
+.pb-80 {
+  padding-bottom: 20rem;
 }
 
 .text-center {

@@ -30,11 +30,12 @@ templ Textarea(text models.Text) {
 }
 
 templ Text(text models.Text) {
-	<div id="text" class="w-[30%]">
+	<div id="text" class="w-[60%]">
 		<pre
 			hx-get={ fmt.Sprintf("/text/update/%s", text.Id) }
 			hx-swap="outerHTML"
 			hx-target="#text"
+			class="pb-80"
 		>
 			{ text.Text }
 		</pre>
